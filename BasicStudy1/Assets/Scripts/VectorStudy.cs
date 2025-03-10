@@ -7,7 +7,8 @@ public class VectorStudy : MonoBehaviour
 
     void Start()
     {
-        
+        //dd
+        //int a = 10;
     }
 
     void Update()
