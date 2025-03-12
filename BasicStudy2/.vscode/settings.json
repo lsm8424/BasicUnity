@@ -56,5 +56,9 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "BasicStudy2.sln"
+    "dotnet.defaultSolution": "BasicStudy2.sln",
+    "cSpell.words": [
+        "Behaviour",
+        "Dont"
+    ]
 }

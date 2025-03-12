@@ -12,8 +12,8 @@ public class BackGroundRepeat : MonoBehaviour
 
     void Update()
     {
-        Vector2 newoffset = thisMaterial.mainTextureOffset;
-        newoffset.Set(0, newoffset.y + (scrollSpeed * Time.deltaTime));
-        thisMaterial.mainTextureOffset = newoffset;
+        Vector2 newOffset = thisMaterial.mainTextureOffset;
+        newOffset.Set(0, newOffset.y + (scrollSpeed * Time.deltaTime));
+        thisMaterial.mainTextureOffset = newOffset;
     }
 }
