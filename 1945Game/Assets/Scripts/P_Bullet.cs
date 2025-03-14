@@ -29,8 +29,20 @@ public class P_Bullet : MonoBehaviour
             );
 
             Destroy(go, 1);
-            //몬스터
-            Destroy(collision.gameObject);
+
+            //collision.gameObject.GetComponent<Monster>().Damage(1);
+            Monster.Instance.Damage(1);
+
+            //미사일 삭제
+            Destroy(gameObject);
+        }
+
+        if (collision.CompareTag("Boss"))
+        {
+            //이펙트생성
+            GameObject go = Instantiate(effect, transform.position, Quaternion.identity);
+            //1초뒤에 지우기
+            Destroy(go, 1);
 
             //미사일 삭제
             Destroy(gameObject);

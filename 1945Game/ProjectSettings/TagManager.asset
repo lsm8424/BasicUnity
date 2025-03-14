@@ -5,11 +5,13 @@ TagManager:
   serializedVersion: 3
   tags:
   - Monster
+  - Item
+  - Boss
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Item
   - Water
   - UI
   - 

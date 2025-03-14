@@ -37,7 +37,7 @@ public class Spawn : MonoBehaviour
 
     IEnumerator RandomSpawn2()
     {
-        while (swi)
+        while (swi2)
         {
             //1초마다
             yield return new WaitForSeconds(StartTime + 2);

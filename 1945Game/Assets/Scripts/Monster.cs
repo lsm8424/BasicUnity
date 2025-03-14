@@ -22,6 +22,7 @@ public class Monster : MonoBehaviour
     public Transform ms1;
     public Transform ms2;
     public GameObject bullet;
+    public GameObject Item = null;
 
     void Start()
     {
@@ -44,5 +45,16 @@ public class Monster : MonoBehaviour
     private void OnBecameInvisible()
     {
         Destroy(gameObject);
+    }
+
+    public void Damage(int attack)
+    {
+        ItemDrop();
+        Destroy(gameObject);
+    }
+
+    public void ItemDrop()
+    {
+        Instantiate(Item, transform.position, Quaternion.identity);
     }
 }
