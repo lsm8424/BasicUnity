@@ -13,15 +13,20 @@ public class Boss : MonoBehaviour
 
     void Start()
     {
+        Invoke("Hide", 2);
         StartCoroutine(BossMissile());
         StartCoroutine(CircleFire());
+    }
+
+    void Hide()
+    {
+        GameObject.Find("TextBossWarning").SetActive(false);
     }
 
     IEnumerator BossMissile()
     {
         while (true)
         {
-            //미사일 두개
             Instantiate(mb, pos1.position, Quaternion.identity);
             Instantiate(mb, pos2.position, Quaternion.identity);
 

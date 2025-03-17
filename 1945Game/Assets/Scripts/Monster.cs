@@ -17,6 +17,7 @@ public class Monster : MonoBehaviour
         }
     }
 
+    public int HP = 100;
     public float Speed = 3;
     public float Delay = 1f;
     public Transform ms1;
@@ -49,8 +50,13 @@ public class Monster : MonoBehaviour
 
     public void Damage(int attack)
     {
-        ItemDrop();
-        Destroy(gameObject);
+        HP -= attack;
+
+        if (HP <= 0)
+        {
+            ItemDrop();
+            Destroy(gameObject);
+        }
     }
 
     public void ItemDrop()

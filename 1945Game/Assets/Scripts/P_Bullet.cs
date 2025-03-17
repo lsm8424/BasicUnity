@@ -4,6 +4,8 @@ public class P_Bullet : MonoBehaviour
 {
     public float Speed = 4.0f;
 
+    public int Attack = 10;
+
     public GameObject effect;
 
     void Start() { }
@@ -31,7 +33,7 @@ public class P_Bullet : MonoBehaviour
             Destroy(go, 1);
 
             //collision.gameObject.GetComponent<Monster>().Damage(1);
-            Monster.Instance.Damage(1);
+            collision.gameObject.GetComponent<Monster>().Damage(Attack);
 
             //미사일 삭제
             Destroy(gameObject);

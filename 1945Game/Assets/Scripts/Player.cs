@@ -1,18 +1,24 @@
+using TreeEditor;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    //스피드
     public float moveSpeed = 5f;
 
-    Animator ani;
+    Animator ani; //애니메이터를 가져올 변수
 
-    public GameObject[] bullet;
+    public GameObject[] bullet; //총알 추후 4개 배열로 만들예정
     public Transform pos = null;
 
     public int power = 0;
 
     [SerializeField]
-    private GameObject powerUp;
+    private GameObject powerup; //private 인스펙터에서 사용하는방법
+
+    //레이져
+    public GameObject lazer;
+    public float gValue = 0;
 
     void Start()
     {
@@ -37,14 +43,39 @@ public class Player : MonoBehaviour
             ani.SetBool("right", false);
 
         if (Input.GetAxis("Vertical") >= 0.5f)
+        {
             ani.SetBool("up", true);
+        }
         else
+        {
             ani.SetBool("up", false);
+        }
 
+        //스페이스
         if (Input.GetKeyDown(KeyCode.Space))
         {
             //프리팹 위치 방향 넣고 생성
             Instantiate(bullet[power], pos.position, Quaternion.identity);
+        }
+        else if (Input.GetKey(KeyCode.Space))
+        {
+            gValue += Time.deltaTime;
+
+            if (gValue >= 1)
+            {
+                GameObject go = Instantiate(lazer, pos.position, Quaternion.identity);
+                Destroy(go, 3);
+                gValue = 0;
+            }
+        }
+        else
+        {
+            gValue -= Time.deltaTime;
+
+            if (gValue <= 0)
+            {
+                gValue = 0;
+            }
         }
 
         transform.Translate(moveX, moveY, 0);
@@ -57,21 +88,23 @@ public class Player : MonoBehaviour
         transform.position = worldPos; //좌표를 적용한다.
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.CompareTag("Item"))
+        if (collision.CompareTag("Item"))
         {
             power += 1;
+
             if (power >= 3)
-            {
                 power = 3;
-            }
             else
             {
-                GameObject go = Instantiate(powerUp, transform.position, Quaternion.identity);
+                //파워업
+                GameObject go = Instantiate(powerup, transform.position, Quaternion.identity);
                 Destroy(go, 1);
             }
-            Destroy(other.gameObject);
+
+            //아이템 먹은 처리
+            Destroy(collision.gameObject);
         }
     }
 }
