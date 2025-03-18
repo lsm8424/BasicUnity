@@ -11,72 +11,142 @@ public class Triump : MonoBehaviour
 
     public Transform pos = null;
 
-    private bool isReady = true;
+    public bool isReady = true;
+    public bool draw = false;
     public float shoot_delay = 0.5f;
 
     private enum ShootType
     {
-        normal,
-        jack,
-        queen,
-        king
+        Normal,
+        Jack,
+        Queen,
+        King
     }
 
-    private ShootType now_shoot = ShootType.normal;
+    private enum DrawType
+    {
+        Jack = 0,
+        Queen = 1,
+        King = 2
+    }
 
-    private int bullet_count = 0;
-    public float bullet_speed = 3f;
-    private float bullet_power = 1;
-    private int joker_stack = 0;
+    private ShootType currentShootType = ShootType.Normal;
+    private DrawType currentDrawType = DrawType.Jack;
+
+    private int spadeStack = 0;
+    private int jokerStack = 0;
+    public float bulletSpeed = 10f;
 
     void Update()
     {
-        Fire();
+        HandleShooting();
+        HandleSpadeDrawing();
     }
 
-    void Fire()
+    // 발사를 처리하는 함수
+    void HandleShooting()
     {
         if (isReady && Input.GetMouseButtonDown(0))
         {
-            Type_Shoot(now_shoot);
+            Vector3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            targetPosition.z = 0;
+
+            FireBullet(currentShootType, targetPosition);
             isReady = false;
-            StartCoroutine(Shoot_Delay());
+            StartCoroutine(ShootDelay());
         }
     }
 
-    void Type_Shoot(ShootType now)
+    // 현재 발사 타입에 맞는 총알을 발사하는 함수
+    void FireBullet(ShootType shootType, Vector3 targetPosition)
     {
-        GameObject go = null; // 발사될 총알을 담을 변수
+        GameObject bulletPrefab = GetBulletPrefab(shootType);
 
-        switch (now)
+        if (bulletPrefab != null)
         {
-            case ShootType.normal:
-                go = Instantiate(normal_bullet, pos.position, Quaternion.identity);
-                break;
-            case ShootType.jack:
-                go = Instantiate(jack_bullet, pos.position, Quaternion.identity);
-                if (joker_stack < 3)
-                    joker_stack++; // ✅ 조커 스택 증가
-                break;
-            case ShootType.queen:
-                go = Instantiate(queen_bullet, pos.position, Quaternion.identity);
-                if (joker_stack < 3)
-                    joker_stack++; // ✅ 조커 스택 증가
-                break;
-            case ShootType.king:
-                go = Instantiate(king_bullet, pos.position, Quaternion.identity);
-                if (joker_stack < 3)
-                    joker_stack++; // ✅ 조커 스택 증가
-                break;
+            GameObject bullet = Instantiate(bulletPrefab, pos.position, Quaternion.identity);
+            Vector3 direction = (targetPosition - pos.position).normalized;
+            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+            rb.linearVelocity = direction * bulletSpeed;
         }
 
-        if (go != null)
+        UpdateStack(shootType);
+    }
+
+    // 발사 타입에 맞는 총알 프리팹을 반환하는 함수
+    GameObject GetBulletPrefab(ShootType shootType)
+    {
+        switch (shootType)
         {
-            go.transform.Translate(Vector3.up * bullet_speed * Time.deltaTime);
+            case ShootType.Normal:
+                return normal_bullet;
+            case ShootType.Jack:
+                return jack_bullet;
+            case ShootType.Queen:
+                return queen_bullet;
+            case ShootType.King:
+                return king_bullet;
+            default:
+                return null;
         }
     }
 
-    IEnumerator Shoot_Delay()
+    // 스페이드나 조커 스택을 업데이트하는 함수
+    void UpdateStack(ShootType shootType)
+    {
+        switch (shootType)
+        {
+            case ShootType.Normal:
+                if (spadeStack < 10 && !draw)
+                    spadeStack++;
+                break;
+            case ShootType.Jack:
+            case ShootType.Queen:
+            case ShootType.King:
+                if (jokerStack < 3)
+                    jokerStack++;
+                break;
+        }
+    }
+
+    // 스페이드 드로우 관련 처리 함수
+    void HandleSpadeDrawing()
+    {
+        if (spadeStack == 10)
+        {
+            draw = true;
+            spadeStack = 0;
+        }
+
+        if (draw)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                CycleDrawType();
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                SetShootTypeBasedOnDraw();
+                draw = false;
+            }
+        }
+    }
+
+    // 드로우 타입을 순차적으로 변경하는 함수
+    void CycleDrawType()
+    {
+        currentDrawType = (DrawType)(((int)currentDrawType + 1) % 3);
+    }
+
+    // 드로우 타입에 맞는 발사 타입을 설정하는 함수
+    void SetShootTypeBasedOnDraw()
+    {
+        currentShootType = (ShootType)currentDrawType;
+    }
+
+    // 발사 후 대기 시간 처리
+    IEnumerator ShootDelay()
     {
         yield return new WaitForSeconds(shoot_delay);
         isReady = true;
