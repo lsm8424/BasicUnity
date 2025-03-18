@@ -27,51 +27,58 @@ public class Triump : MonoBehaviour
     private int bullet_count = 0;
     public float bullet_speed = 3f;
     private float bullet_power = 1;
+    private int joker_stack = 0;
 
-    void Start() { }
-
-    void Update() { }
-
-    void Shoot()
+    void Update()
     {
-        if (isReady != false)
+        Fire();
+    }
+
+    void Fire()
+    {
+        if (isReady && Input.GetMouseButtonDown(0))
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                switch (now_shoot)
-                {
-                    case ShootType.normal:
-                        Normal_Shoot();
-                        break;
-                    case ShootType.jack:
-                        Jack_Shoot();
-                        break;
-                    case ShootType.queen:
-                        Queen_Shoot();
-                        break;
-                    case ShootType.king:
-                        King_Shoot();
-                        break;
-                }
-                isReady = false;
-                StartCoroutine(Shoot_Delay());
-            }
+            Type_Shoot(now_shoot);
+            isReady = false;
+            StartCoroutine(Shoot_Delay());
         }
     }
 
-    void Normal_Shoot()
+    void Type_Shoot(ShootType now)
     {
-        GameObject go = Instantiate(normal_bullet, pos.position, Quaternion.identity);
+        GameObject go = null; // 발사될 총알을 담을 변수
+
+        switch (now)
+        {
+            case ShootType.normal:
+                go = Instantiate(normal_bullet, pos.position, Quaternion.identity);
+                break;
+            case ShootType.jack:
+                go = Instantiate(jack_bullet, pos.position, Quaternion.identity);
+                if (joker_stack < 3)
+                    joker_stack++; // ✅ 조커 스택 증가
+                break;
+            case ShootType.queen:
+                go = Instantiate(queen_bullet, pos.position, Quaternion.identity);
+                if (joker_stack < 3)
+                    joker_stack++; // ✅ 조커 스택 증가
+                break;
+            case ShootType.king:
+                go = Instantiate(king_bullet, pos.position, Quaternion.identity);
+                if (joker_stack < 3)
+                    joker_stack++; // ✅ 조커 스택 증가
+                break;
+        }
+
+        if (go != null)
+        {
+            go.transform.Translate(Vector3.up * bullet_speed * Time.deltaTime);
+        }
     }
-
-    void Jack_Shoot() { }
-
-    void Queen_Shoot() { }
-
-    void King_Shoot() { }
 
     IEnumerator Shoot_Delay()
     {
         yield return new WaitForSeconds(shoot_delay);
+        isReady = true;
     }
 }
