@@ -75,8 +75,7 @@ public class Spawn : MonoBehaviour
     {
         swi2 = false;
         StopCoroutine("RandomSpawn2");
-        textBossWarning.SetActive(true);
-        //보스
+        textBossWarning.SetActive(true); //보스
         Vector3 pos = new Vector3(0, 2.97f, 0);
         GameObject go = Instantiate(Boss, pos, Quaternion.identity);
     }
